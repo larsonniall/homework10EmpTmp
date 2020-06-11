@@ -33,3 +33,66 @@ const render = require("./lib/htmlRenderer");
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+async employeeResponse(){
+    let employeeInput=
+    await inquirer
+    .prompt([
+        {type:"input", message: "Name: ", name: "name"},
+        {type:"input", message: "ID Number: ", name: "ID"},
+        {type:"input", message: "Email address: ", name: "email"},
+        {type:"input", message: "Company Title: ", name: "title"}
+    ]);
+    switch (employeeInput.title.toLowerCase()){
+        case "manager": employeeInput= await this.officeNumberInput(employeeInput);
+        case "engineer": employeeInput= await this.getGithubUser(employeeInput);
+        case "intern": employeeInput= await this.getSchoolAtt(employeeInput);
+    }
+    return employeeInput;
+}
+
+async officeNumberInput(employeeInput){
+    let managerInput=
+    await inquirer
+    .prompt([
+        {type:"input", message: "Office Number: ", name: "officeNumber"}
+    ]);
+    employeeInput.officeNumber = await managerInput.officeNumber;
+    return employeeInput;
+}
+
+async getGithubUser(employeeInput){
+    let engineerInput=
+    await inquirer
+    .prompt([
+        {type:"input", message: "Your GitHub Username: ", name: "github"}
+    ]);
+    employeeInput.github = await engineerInput.github;
+    return employeeInput;
+}
+
+async getSchoolAtt(employeeInput){
+    let internInput=
+    await inquirer
+    .prompt([
+        {type:"input", message: "School Attend(ed/ing): ", name: "school"}
+    ]);
+    employeeInput.school = await internInput.school;
+    return employeeInput;
+}
+
+newEmployee(employeeInput){
+    let employee;
+    const {id, name, email}= employeeInput;
+    switch(employeeInput.title.toLowerCase()){
+        case "manager":
+            const manager= new Manager(name, id, email, employeeInput.officeNumber);
+            employee=manager;
+        case "engineer":
+            const engineer= new Engineer(name, id, email, employeeInput.github);
+            employee=engineer;
+        case "intern":
+            const intern= new Intern(name, id, email, employeeInput.school);
+            employee=intern;
+    }
+    return employee;
+}
